@@ -15,7 +15,7 @@ Bu dosyada test düzeneğine ait temel tasarım, montaj ve kesit-görselleri ref
 
 **4. Disk kesit detayı ve hava aralığı:**  
 ![image4](image4)
-- Hava aralığı: 8 mm merkez-kenar, toplam yükseklik 60 mm, diş-genişlikleri not edilmiş.
+- Hava aralığı (operasyonel hedef): her iki tarafta 3 mm (minimum 2 mm kuralı korunarak). Çizimdeki diğer ölçüler kesit geometrisi referansıdır.
 
 ---
 Bu görseller tüm teknik dokümantasyon ve hesaplarda referans alınacaktır.

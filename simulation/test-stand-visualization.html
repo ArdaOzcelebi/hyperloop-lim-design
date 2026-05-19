@@ -75,17 +75,45 @@
       color: #576173;
       font-size: 13px;
     }
+    .references {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    figure {
+      margin: 0;
+      border: 1px solid #dbe3ef;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f8fbff;
+    }
+    figure img {
+      display: block;
+      width: 100%;
+      height: 170px;
+      object-fit: cover;
+      background: #e5eefc;
+    }
+    figcaption {
+      padding: 8px 10px;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    a {
+      color: #1d4ed8;
+    }
   </style>
 </head>
 <body>
   <h1>LIM Test Stand Görselleştirme ve Basit Simülasyon</h1>
   <p>
     Bu sayfa, <code>docs/test-rig.md</code> ve <code>calcs/engineering-params.md</code> dosyalarındaki
-    ölçülerle uyumlu olacak şekilde test standı geometrisini ve 120 saniyelik basit hızlanma senaryosunu gösterir.
+    ölçülerle uyumlu olacak şekilde test standı geometrisini, 3B yerleşim yaklaşımını ve 120 saniyelik basit hızlanma senaryosunu gösterir.
   </p>
   <p class="muted">
     Sabitler: Disk çapı 1600 mm, güvenli alan yamuk (üst 600 mm / alt 1300 mm / yükseklik 600 mm),
-    disk kütlesi 43 kg, efektif yarıçap 0.8 m.
+    disk kütlesi 43 kg, efektif yarıçap 0.8 m. Hava aralığı; motorun disk/ray tarafına bakan aktif üst yüzeyi ile disk arasındaki boşluktur.
   </p>
 
   <div class="controls panel">
@@ -111,17 +139,46 @@
     <div class="panel">
       <h2>1) Test standı geometrisi</h2>
       <canvas id="geometryCanvas" width="740" height="520"></canvas>
-      <p class="muted">Yeşil alan, montaj güvenli bölgesini; mavi blok, örnek LIM yerleşimini gösterir.</p>
+      <p class="muted">Yeşil alan montaj güvenli bölgesini, mavi blok motor gövdesini, kırmızı ölçü oku ise disk ile motor aktif yüzeyi arasındaki hava aralığını gösterir.</p>
     </div>
     <div class="panel">
-      <h2>2) 120 s basit hızlanma simülasyonu</h2>
+      <h2>2) 3B yerleşim konsepti</h2>
+      <canvas id="perspectiveCanvas" width="740" height="520"></canvas>
+      <p class="muted">Bu panel, motorun stand içine nasıl oturtulacağını ve üst aktif yüzeyinin disk altına nasıl yaklaştırılacağını şematik olarak gösterir.</p>
+    </div>
+    <div class="panel">
+      <h2>3) 120 s basit hızlanma simülasyonu</h2>
       <canvas id="simCanvas" width="740" height="520"></canvas>
       <div class="metrics" id="metrics"></div>
     </div>
   </div>
 
+  <div class="panel" style="margin-top:16px;">
+    <h2>4) Paylaşılan referans görseller</h2>
+    <p class="muted">Aşağıdaki görseller kullanıcı tarafından paylaşılan güncel referanslardır; test standı önü, kesiti ve 3B montaj algısı için referans olarak kullanılır.</p>
+    <div class="references">
+      <figure>
+        <img src="https://github.com/user-attachments/assets/9e7437d7-a353-4926-9b3c-94cae70e66d3" alt="Ön görünüşte disk ve yeşil güvenli alan" />
+        <figcaption>Ön görünüş: 1600 mm disk ve 600/1300/600 mm güvenli alan referansı.</figcaption>
+      </figure>
+      <figure>
+        <img src="https://github.com/user-attachments/assets/e8c1dea4-9d56-4ae9-8edb-e74a08e57b07" alt="Test standı kesit referansı" />
+        <figcaption>Kesit referansı: disk, stand ve yaklaşım boşluklarının konumunu okumak için.</figcaption>
+      </figure>
+      <figure>
+        <img src="https://github.com/user-attachments/assets/06fd3e24-336c-48b1-b435-f540f2453c6e" alt="3B test standı referansı" />
+        <figcaption>3B stand referansı: taşıyıcı şase, disk ve montaj hacmi algısı.</figcaption>
+      </figure>
+      <figure>
+        <img src="https://github.com/user-attachments/assets/61a7b1ca-0711-4c45-b4b0-9eeb50b1f259" alt="Motor yerleşimi için ek referans" />
+        <figcaption>Motor yerleşimi için ek referans: motorun oturuşu ve erişim yönleri için kullanılır.</figcaption>
+      </figure>
+    </div>
+  </div>
+
   <script>
     const geometryCanvas = document.getElementById('geometryCanvas');
+    const perspectiveCanvas = document.getElementById('perspectiveCanvas');
     const simCanvas = document.getElementById('simCanvas');
     const metricsDiv = document.getElementById('metrics');
 
@@ -143,7 +200,8 @@
       maxMotorWidthPx: 210,
       motorLabelOffsetX: 18,
       motorLabelOffsetY: 46,
-      gapLabelOffsetPx: -8
+      gapLabelOffsetPx: -8,
+      visibleGapFloorPx: 12
     };
 
     const chart = {
@@ -225,12 +283,16 @@
       const motorW = Math.min(trapTop - layout.motorPaddingPx, layout.maxMotorWidthPx);
       const motorH = 80;
       const motorX = cx - motorW / 2;
-      const motorY = trapTopY + 35;
+      const diskBottomY = cy + diskR;
+      const visibleGapPx = Math.max(inputs.airGapMm * layout.mmToPx, layout.visibleGapFloorPx);
+      const motorY = diskBottomY - visibleGapPx - motorH;
       ctx.fillStyle = 'rgba(37, 99, 235, 0.2)';
       ctx.strokeStyle = '#2563eb';
       ctx.lineWidth = 2;
       ctx.fillRect(motorX, motorY, motorW, motorH);
       ctx.strokeRect(motorX, motorY, motorW, motorH);
+      ctx.fillStyle = 'rgba(37, 99, 235, 0.12)';
+      ctx.fillRect(motorX + 18, motorY - 10, motorW - 36, 10);
 
       ctx.fillStyle = '#1e293b';
       ctx.font = '14px Arial';
@@ -245,17 +307,130 @@
 
       ctx.strokeStyle = '#b91c1c';
       ctx.lineWidth = 1.5;
-      const gapXLeft = motorX - 25;
+      const gapX = cx;
       ctx.beginPath();
-      ctx.moveTo(gapXLeft, motorY);
-      ctx.lineTo(gapXLeft, motorY + motorH);
+      ctx.moveTo(gapX, diskBottomY);
+      ctx.lineTo(gapX, motorY);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(gapX - 6, diskBottomY);
+      ctx.lineTo(gapX + 6, diskBottomY);
+      ctx.moveTo(gapX - 6, motorY);
+      ctx.lineTo(gapX + 6, motorY);
       ctx.stroke();
       ctx.fillStyle = '#b91c1c';
       ctx.fillText(
         `${inputs.airGapMm.toFixed(1)} mm`,
-        gapXLeft + layout.gapLabelOffsetPx,
+        gapX + 10,
         motorY + layout.gapLabelOffsetPx
       );
+      ctx.fillStyle = '#475569';
+      ctx.fillText('Not: 3 mm boşluk görünürlük için şemada büyütülmüştür.', 16, h - 18);
+    }
+
+    function drawPerspective(inputs) {
+      const ctx = perspectiveCanvas.getContext('2d');
+      const w = perspectiveCanvas.width;
+      const h = perspectiveCanvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const ox = 150;
+      const oy = 105;
+      const standW = 430;
+      const standH = 290;
+      const depth = 110;
+      const diskCx = ox + standW * 0.55;
+      const diskCy = oy + 130;
+      const diskRx = 150;
+      const diskRy = 125;
+      const visibleGapPx = Math.max(inputs.airGapMm * layout.mmToPx, layout.visibleGapFloorPx);
+      const motorX = ox + 165;
+      const motorY = oy + 225;
+      const motorW = 120;
+      const motorH = 52;
+      const motorDepth = 82;
+
+      function prism(x, y, width, height, d, front, side, top) {
+        ctx.fillStyle = top;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + d, y - d * 0.45);
+        ctx.lineTo(x + width + d, y - d * 0.45);
+        ctx.lineTo(x + width, y);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = side;
+        ctx.beginPath();
+        ctx.moveTo(x + width, y);
+        ctx.lineTo(x + width + d, y - d * 0.45);
+        ctx.lineTo(x + width + d, y + height - d * 0.45);
+        ctx.lineTo(x + width, y + height);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = front;
+        ctx.fillRect(x, y, width, height);
+      }
+
+      prism(ox, oy, standW, 16, depth, '#cbd5e1', '#94a3b8', '#e2e8f0');
+      prism(ox, oy + standH, standW, 16, depth, '#cbd5e1', '#94a3b8', '#e2e8f0');
+      prism(ox, oy, 16, standH + 16, depth, '#cbd5e1', '#94a3b8', '#e2e8f0');
+      prism(ox + standW - 16, oy, 16, standH + 16, depth, '#cbd5e1', '#94a3b8', '#e2e8f0');
+
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 8;
+      ctx.beginPath();
+      ctx.moveTo(ox + 30, oy + standH);
+      ctx.lineTo(ox + 150, oy + 55);
+      ctx.moveTo(ox + standW - 30, oy + standH);
+      ctx.lineTo(ox + standW - 150, oy + 55);
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(148, 163, 184, 0.22)';
+      ctx.beginPath();
+      ctx.ellipse(diskCx + 36, diskCy - 18, diskRx, diskRy, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#bcc4df';
+      ctx.beginPath();
+      ctx.ellipse(diskCx, diskCy, diskRx, diskRy, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#7c84a6';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(34, 197, 94, 0.22)';
+      ctx.beginPath();
+      ctx.moveTo(ox + 105, oy + 300);
+      ctx.lineTo(ox + 205, oy + 200);
+      ctx.lineTo(ox + 310, oy + 200);
+      ctx.lineTo(ox + 385, oy + 300);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#16a34a';
+      ctx.stroke();
+
+      prism(motorX, motorY, motorW, motorH, motorDepth, '#60a5fa', '#2563eb', '#93c5fd');
+      ctx.fillStyle = '#dbeafe';
+      ctx.fillRect(motorX + 18, motorY - 8, motorW - 36, 8);
+
+      const diskBottomY = diskCy + diskRy;
+      const gapX = motorX + motorW / 2;
+      ctx.strokeStyle = '#b91c1c';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(gapX, diskBottomY);
+      ctx.lineTo(gapX, motorY - visibleGapPx / 2);
+      ctx.stroke();
+      ctx.fillStyle = '#b91c1c';
+      ctx.fillText(`Hava aralığı ${inputs.airGapMm.toFixed(1)} mm`, gapX + 10, motorY - 10);
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '14px Arial';
+      ctx.fillText('3B test standı şeması', 16, 28);
+      ctx.fillText('Disk altına yaklaşan motor bloğu ve taşıyıcı stand', 16, 48);
+      ctx.fillText('Motor aktif yüzeyi üstte, bağlantı plakası altta kurgulanmıştır.', 16, 68);
+      ctx.fillText('Yeşil hacim: güvenli montaj bölgesi', 16, h - 24);
     }
 
     function simulate(inputs) {
@@ -370,6 +545,7 @@
       const inputs = readInputs();
       const result = simulate(inputs);
       drawGeometry(inputs);
+      drawPerspective(inputs);
       drawSimulation(inputs, result);
 
       metricsDiv.innerHTML = `
@@ -378,7 +554,8 @@
         Hedef açısal hız ω = <strong>${result.omegaTarget.toFixed(2)} rad/s</strong><br>
         İvme fazı tork gereksinimi T = <strong>${result.accelTorque.toFixed(2)} N·m</strong><br>
         İvme fazı lineer kuvvet F = <strong>${result.accelForce.toFixed(2)} N</strong><br>
-        Kuvvet kıyas: F / hedef = <strong>${(100 * result.accelForce / inputs.forceTarget).toFixed(1)}%</strong>
+        Kuvvet kıyas: F / hedef = <strong>${(100 * result.accelForce / inputs.forceTarget).toFixed(1)}%</strong><br>
+        Yerleşim yorumu: <strong>hava aralığı solda/sağda değil, disk alt yüzeyi ile motor üst aktif yüzeyi arasında okunmalıdır.</strong>
       `;
     }
 

@@ -33,3 +33,4 @@ Her analiz çıktısı .jpg/.png grafik veya uygun tablo ile bu klasörde payla�
 ## Görselleştirme ve Basit Simülasyon
 - Test standı geometrisi ve parametre tabanlı 120 saniyelik basit hızlanma simülasyonu için:
   - [simulation/test-stand-visualization.html](test-stand-visualization.html)
+- Sayfa içinde düzeltilmiş hava aralığı gösterimi, 3B yerleşim konsepti ve paylaşılan referans görseller bulunmaktadır.

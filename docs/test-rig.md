@@ -28,5 +28,7 @@ Yani önden görünüşte solda/sağda yatay bir boşluk değil, motorun disk al
   ![3B test standı referansı](https://github.com/user-attachments/assets/06fd3e24-336c-48b1-b435-f540f2453c6e)
 - Motor yerleşimi için ek referans:  
   ![Motor yerleşimi referansı](https://github.com/user-attachments/assets/61a7b1ca-0711-4c45-b4b0-9eeb50b1f259)
+- İlave kullanıcı referansı:  
+  ![İlave kullanıcı referansı](https://github.com/user-attachments/assets/d36e7a43-c88f-41af-8d43-98f6d0e911b3)
 
 Testte; motorun disk ile temassız (air gap), titreşimsiz ve güvenlik limitlerine uygun montajı bu alana uygulanacaktır.

@@ -37,5 +37,9 @@ Bu dosyada test düzeneğine ait temel tasarım, montaj ve kesit-görselleri ref
 ![Motor yerleşimi referansı](https://github.com/user-attachments/assets/61a7b1ca-0711-4c45-b4b0-9eeb50b1f259)
 - Motorun stand içine oturuş yönü ve erişim açıklığı için yardımcı referanstır
 
+**9. İlave kullanıcı referansı:**  
+![İlave kullanıcı referansı](https://github.com/user-attachments/assets/d36e7a43-c88f-41af-8d43-98f6d0e911b3)
+- Test standı ile motor ilişkisini okumak için ek referans olarak tutulur
+
 ---
 Bu görseller tüm teknik dokümantasyon ve hesaplarda referans alınacaktır.

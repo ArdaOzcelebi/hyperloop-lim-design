@@ -243,7 +243,6 @@
 
     function simulate(inputs) {
       const dt = simulation.timeStepSec;
-      const n = params.simDurationSec + 1;
       const time = [];
       const rpm = [];
       const force = [];
@@ -254,7 +253,7 @@
       const accelTorque = inertia * alpha;
       const accelForce = accelTorque / params.effectiveRadiusM;
 
-      for (let t = 0; t < n; t += dt) {
+      for (let t = 0; t <= params.simDurationSec; t += dt) {
         const currentOmega = t <= inputs.spinupSec ? alpha * t : omegaTarget;
         const currentRpm = currentOmega * 60 / (2 * Math.PI);
         const currentForce = t <= inputs.spinupSec ? accelForce : 0;

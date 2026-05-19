@@ -13,9 +13,9 @@ Bu klasörde, Hyperloop yarışması kapsamında lineer indüksiyon motor itki s
 - Montaj detayları, test ve ölçüm arayüzü, FMEA, fail-safe, veri toplama vb. dokümante edilmeli.
 
 ## Test Platformu ve Fiziksel Sınırlar
-- Test düzeneği: 1400 mm çapında disk (Şekil 3; [test-rig-image.png](test-rig-image.png))
-- Montaj güvenlik alanı: Diskin alt-orta bölgesi (yeşil alan), minimum 600x300 mm kurulum alanı.
+- Test düzeneği: 1600 mm çapında disk (Şekil ve önden görünüş için docs/test-rig-images.md dosyasına bakınız)
+- Montaj güvenlik alanı: Üst kenarı 600 mm, alt kenarı 1300 mm, yüksekliği 600 mm olan yamuk (yeşil alan)
 
 ---
 
-Bu klasörle birlikte `test-rig-image.png` ve Şekil 3 yerleştirilmiştir. Detaylar ilerledikçe eklenecektir.
+Tüm çizim ve güncel değerler için [docs/test-rig-images.md](docs/test-rig-images.md) referans alınır. Detaylar ilerledikçe eklenecektir.

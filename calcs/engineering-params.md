@@ -19,7 +19,7 @@ Bu dökümanda, Hyperloop LIM itki sistemi için gereken tüm ana mühendislik p
 | Parametre                 | Değer (Aralık)             | Gerekçe |
 |--------------------------|----------------------------|---------|
 | Kutup sayısı             | 6 (başlangıç; optimize edilecek) | 1600mm/6 ~ 267mm kutup adımı ile lineer hız, 50Hz ve slip limita uygundur |
-| Kutup adımı              | ≈233 mm                    | Disk çevresine oranla uygun |
+| Kutup adımı              | ≈267 mm                    | Disk çevresine oranla uygun |
 | Slip                     | %5                         | Yüksek verim, hareketli yükte uygun |
 | Sarım sayısı             | 18/faz (örnek)             | Yeterli manyetik kuvvet ve akı için |
 | Akım değeri              | 15 A RMS (74 A max tahmini) | Slot fill ve tel çapına göre |

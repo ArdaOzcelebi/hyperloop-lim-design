@@ -15,7 +15,7 @@ Bu repo, Hyperloop yarışması için çift taraflı lineer indüksiyon motoruna
 
 ## Kısa Teknik Bilgi
 - Disk çapı: 1600 mm
-- Hava aralığı: 2-3 mm (her iki tarafta), çift taraflı LIM
+- Hava aralığı: Her iki tarafta en az 2 mm (tasarım hedefi: 3 mm), çift taraflı LIM
 - Güç beslemesi: 220/380V AC, 50 Hz
 - Sürekli çalışmada termal yükselme: ΔT < 30°C
 - Montaj güvenlik alanı: Üst kenarı 600 mm, alt kenarı 1300 mm, yüksekliği 600 mm olan yamuk (yeşil alan)

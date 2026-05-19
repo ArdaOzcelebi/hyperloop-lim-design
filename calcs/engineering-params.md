@@ -3,23 +3,23 @@
 Bu dökümanda, Hyperloop LIM itki sistemi için gereken tüm ana mühendislik parametreleri, ilgili hesaplamalar ve tasarım seçimlerinin gerekçeleri açıklanmaktadır.
 
 ## 1. Temel Disk ve Hedef Değerler
-- Disk çapı: 1400 mm
+- Disk çapı: 1600 mm
 - Disk kütlesi: 43 kg
 - Çevresel hız hedefi: 10 m/s
-- Efektif yarıçap: 450 mm (itki uygulama noktası)
-- Hedef açısal hız: 10 / 0.45 ≈ 22.2 rad/s ≈ 212 RPM (kontrol: yarışma değeri 120 RPM, yazılı olarak değerlendirilecek)
+- Efektif yarıçap: 800 mm (disk dış çevresi referansı)
+- Hedef açısal hız: 10 / 0.8 = 12.5 rad/s ≈ 119.4 RPM (yarışma hedefi olan 120 RPM ile uyumlu)
 
 ## 2. Kuvvet ve Tork Hesabı
-- Atalet momenti: J = 0.5 * m * r² ≈ 0.5 * 43 * 0.45² ≈ 4.37 kg·m²
-- Açısal ivme: α = Δω / Δt = 22.2 / 60 ≈ 0.37 rad/s²
-- Gerekli tork: T = J * α ≈ 1.62 Nm
+- Atalet momenti: J = 0.5 * m * r² ≈ 0.5 * 43 * 0.8² ≈ 13.76 kg·m²
+- Açısal ivme: α = Δω / Δt = 12.5 / 60 ≈ 0.21 rad/s²
+- Gerekli tork: T = J * α ≈ 2.87 Nm
 - Gerekli lineer kuvvet: F = T / r ≈ 3.6 N (güvenlik payı ile kabaca 10 N kapasite hedeflenmektedir)
 
 ## 3. Motor ve Sargı Parametreleri (Seçim Gerekçeleriyle)
 | Parametre                 | Değer (Aralık)             | Gerekçe |
 |--------------------------|----------------------------|---------|
-| Kutup sayısı             | 6 (başlangıç; optimize edilecek) | 1400mm/6 ~ 233mm kutup adımı ile lineer hız, 50Hz ve slip limita uygundur |
-| Kutup adımı              | ≈233 mm                    | Disk çevresine oranla uygun |
+| Kutup sayısı             | 6 (başlangıç; optimize edilecek) | 1600mm/6 ~ 267mm kutup adımı ile lineer hız, 50Hz ve slip limita uygundur |
+| Kutup adımı              | ≈267 mm                    | Disk çevresine oranla uygun |
 | Slip                     | %5                         | Yüksek verim, hareketli yükte uygun |
 | Sarım sayısı             | 18/faz (örnek)             | Yeterli manyetik kuvvet ve akı için |
 | Akım değeri              | 15 A RMS (74 A max tahmini) | Slot fill ve tel çapına göre |

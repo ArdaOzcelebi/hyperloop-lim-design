@@ -139,7 +139,10 @@
       diskCenterXRatio: 0.48,
       trapezoidVerticalOffsetPx: 20,
       motorPaddingPx: 20,
-      maxMotorWidthPx: 210
+      maxMotorWidthPx: 210,
+      motorLabelOffsetX: 18,
+      motorLabelOffsetY: 46,
+      gapLabelOffsetPx: -8
     };
 
     const chart = {
@@ -220,8 +223,8 @@
         16,
         46
       );
-      ctx.fillText(`Air gap (hedef): ${inputs.airGapMm.toFixed(1)} mm`, 16, 66);
-      ctx.fillText('Örnek LIM yerleşimi', motorX + 18, motorY + 46);
+      ctx.fillText(`Hava aralığı (hedef): ${inputs.airGapMm.toFixed(1)} mm`, 16, 66);
+      ctx.fillText('Örnek LIM yerleşimi', motorX + layout.motorLabelOffsetX, motorY + layout.motorLabelOffsetY);
 
       ctx.strokeStyle = '#b91c1c';
       ctx.lineWidth = 1.5;
@@ -231,7 +234,11 @@
       ctx.lineTo(gapXLeft, motorY + motorH);
       ctx.stroke();
       ctx.fillStyle = '#b91c1c';
-      ctx.fillText(`${inputs.airGapMm.toFixed(1)} mm`, gapXLeft - 8, motorY - 8);
+      ctx.fillText(
+        `${inputs.airGapMm.toFixed(1)} mm`,
+        gapXLeft + layout.gapLabelOffsetPx,
+        motorY + layout.gapLabelOffsetPx
+      );
     }
 
     function simulate(inputs) {

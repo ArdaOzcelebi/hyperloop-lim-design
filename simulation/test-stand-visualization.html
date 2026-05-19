@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Hyperloop LIM test stand geometrisi ve basit hızlanma simülasyonu görselleştirmesi." />
   <title>Hyperloop LIM Test Stand Görselleştirme</title>
   <style>
     :root {
@@ -157,12 +158,26 @@
       solidDiskInertiaFactor: 0.5
     };
 
+    const defaults = {
+      targetRpm: 120,
+      spinupSec: 60,
+      airGapMm: 3,
+      forceTarget: 10
+    };
+
+    function getNumberValue(id, fallback) {
+      const el = document.getElementById(id);
+      if (!el) return fallback;
+      const value = Number(el.value);
+      return Number.isFinite(value) ? value : fallback;
+    }
+
     function readInputs() {
       return {
-        targetRpm: Math.max(1, Number(document.getElementById('targetRpm').value) || 120),
-        spinupSec: Math.max(1, Number(document.getElementById('spinupSec').value) || 60),
-        airGapMm: Math.max(2, Number(document.getElementById('airGapMm').value) || 3),
-        forceTarget: Math.max(1, Number(document.getElementById('forceTarget').value) || 10)
+        targetRpm: Math.max(1, getNumberValue('targetRpm', defaults.targetRpm)),
+        spinupSec: Math.max(1, getNumberValue('spinupSec', defaults.spinupSec)),
+        airGapMm: Math.max(2, getNumberValue('airGapMm', defaults.airGapMm)),
+        forceTarget: Math.max(1, getNumberValue('forceTarget', defaults.forceTarget))
       };
     }
 
@@ -365,7 +380,8 @@
     }
 
     ['targetRpm', 'spinupSec', 'airGapMm', 'forceTarget'].forEach((id) => {
-      document.getElementById(id).addEventListener('input', render);
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', render);
     });
 
     render();

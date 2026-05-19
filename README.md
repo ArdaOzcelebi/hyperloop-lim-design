@@ -14,17 +14,14 @@ Bu repo, Hyperloop yarışması için çift taraflı lineer indüksiyon motoruna
 - `/simulation/`: Termal ve manyetik analiz çıktı şablonları
 
 ## Kısa Teknik Bilgi
-- Disk çapı: 1400 mm, kütle: 43 kg, çevre hız hedefi: 10 m/s
+- Disk çapı: 1600 mm
 - Hava aralığı: 2-3 mm (her iki tarafta), çift taraflı LIM
 - Güç beslemesi: 220/380V AC, 50 Hz
 - Sürekli çalışmada termal yükselme: ΔT < 30°C
-- Güvenlik: FMEA ve fail-safe tasarım, fiziksel emniyet, güvenlik teker sistemleri
+- Montaj güvenlik alanı: Üst kenarı 600 mm, alt kenarı 1300 mm, yüksekliği 600 mm olan yamuk (yeşil alan)
 
-## Görsel
-Aşağıda test düzeneği montaj ve güvenli alan örneği [docs/test-rig.md](docs/test-rig.md) ve resimde gösterilecektir.
-
-![Test Sistem Montajı ve Güvenlik Alanı](docs/test-rig-image.png)
+## Test Düzeneği Görselleri
+Güncel çizimler ve ölçüler docs/test-rig-images.md dosyasında bulunur.
 
 ---
-
 Her klasörde, başlıklar ve dosyalar ilerledikçe eklenecek ve gerekçeler-ölçümler-analizler eklenmeye devam edecektir.

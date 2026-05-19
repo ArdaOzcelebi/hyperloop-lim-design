@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hyperloop LIM Test Stand Görselleştirme</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 16px;
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 22px;
+    }
+    p {
+      margin: 6px 0;
+      line-height: 1.4;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+    .panel {
+      background: #fff;
+      border: 1px solid #dbe3ef;
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 2px 6px rgba(31, 41, 55, 0.08);
+    }
+    canvas {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid #dbe3ef;
+      border-radius: 8px;
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #b9c7dc;
+      font-size: 14px;
+    }
+    .metrics {
+      margin-top: 10px;
+      font-size: 14px;
+      background: #f9fbff;
+      border: 1px dashed #9db2d6;
+      border-radius: 8px;
+      padding: 8px;
+    }
+    .muted {
+      color: #576173;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <h1>LIM Test Stand Görselleştirme + Basit Simülasyon</h1>
+  <p>
+    Bu sayfa, <code>docs/test-rig.md</code> ve <code>calcs/engineering-params.md</code> dosyalarındaki
+    ölçülerle uyumlu olacak şekilde test standı geometrisini ve 120 saniyelik basit hızlanma senaryosunu gösterir.
+  </p>
+  <p class="muted">
+    Sabitler: Disk çapı 1600 mm, güvenli alan yamuk (üst 600 mm / alt 1300 mm / yükseklik 600 mm),
+    disk kütlesi 43 kg, efektif yarıçap 0.8 m.
+  </p>
+
+  <div class="controls panel">
+    <div>
+      <label for="targetRpm">Hedef hız (RPM)</label>
+      <input id="targetRpm" type="number" min="1" value="120" />
+    </div>
+    <div>
+      <label for="spinupSec">Hedefe çıkış süresi (s)</label>
+      <input id="spinupSec" type="number" min="1" value="60" />
+    </div>
+    <div>
+      <label for="airGapMm">Air gap (mm, her iki taraf)</label>
+      <input id="airGapMm" type="number" min="2" value="3" step="0.1" />
+    </div>
+    <div>
+      <label for="forceTarget">Hedef kuvvet sınırı (N)</label>
+      <input id="forceTarget" type="number" min="1" value="10" step="0.1" />
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="panel">
+      <h2>1) Test standı geometrisi</h2>
+      <canvas id="geometryCanvas" width="740" height="520"></canvas>
+      <p class="muted">Yeşil alan, montaj güvenli bölgesini; mavi blok, örnek LIM yerleşimini gösterir.</p>
+    </div>
+    <div class="panel">
+      <h2>2) 120 s basit hızlanma simülasyonu</h2>
+      <canvas id="simCanvas" width="740" height="520"></canvas>
+      <div class="metrics" id="metrics"></div>
+    </div>
+  </div>
+
+  <script>
+    const geometryCanvas = document.getElementById('geometryCanvas');
+    const simCanvas = document.getElementById('simCanvas');
+    const metricsDiv = document.getElementById('metrics');
+
+    const params = {
+      diskDiameterMm: 1600,
+      trapezoidTopMm: 600,
+      trapezoidBottomMm: 1300,
+      trapezoidHeightMm: 600,
+      diskMassKg: 43,
+      effectiveRadiusM: 0.8,
+      simDurationSec: 120
+    };
+
+    function readInputs() {
+      return {
+        targetRpm: Math.max(1, Number(document.getElementById('targetRpm').value) || 120),
+        spinupSec: Math.max(1, Number(document.getElementById('spinupSec').value) || 60),
+        airGapMm: Math.max(2, Number(document.getElementById('airGapMm').value) || 3),
+        forceTarget: Math.max(1, Number(document.getElementById('forceTarget').value) || 10)
+      };
+    }
+
+    function drawGeometry(inputs) {
+      const ctx = geometryCanvas.getContext('2d');
+      const w = geometryCanvas.width;
+      const h = geometryCanvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const mmToPx = 0.22;
+      const diskR = (params.diskDiameterMm / 2) * mmToPx;
+      const cx = w * 0.48;
+      const cy = h * 0.5;
+
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, diskR, 0, Math.PI * 2);
+      ctx.stroke();
+
+      const trapTop = params.trapezoidTopMm * mmToPx;
+      const trapBottom = params.trapezoidBottomMm * mmToPx;
+      const trapH = params.trapezoidHeightMm * mmToPx;
+      const trapTopY = cy + diskR - trapH - 20;
+      const trapBottomY = trapTopY + trapH;
+
+      const xTopLeft = cx - trapTop / 2;
+      const xTopRight = cx + trapTop / 2;
+      const xBotLeft = cx - trapBottom / 2;
+      const xBotRight = cx + trapBottom / 2;
+
+      ctx.fillStyle = 'rgba(34, 197, 94, 0.22)';
+      ctx.strokeStyle = '#16a34a';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(xTopLeft, trapTopY);
+      ctx.lineTo(xTopRight, trapTopY);
+      ctx.lineTo(xBotRight, trapBottomY);
+      ctx.lineTo(xBotLeft, trapBottomY);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      const motorW = Math.min(trapTop - 20, 210);
+      const motorH = 80;
+      const motorX = cx - motorW / 2;
+      const motorY = trapTopY + 35;
+      ctx.fillStyle = 'rgba(37, 99, 235, 0.2)';
+      ctx.strokeStyle = '#2563eb';
+      ctx.lineWidth = 2;
+      ctx.fillRect(motorX, motorY, motorW, motorH);
+      ctx.strokeRect(motorX, motorY, motorW, motorH);
+
+      ctx.fillStyle = '#1e293b';
+      ctx.font = '14px Arial';
+      ctx.fillText('Disk çapı: 1600 mm', 16, 26);
+      ctx.fillText('Güvenli alan: üst 600 / alt 1300 / yükseklik 600 mm', 16, 46);
+      ctx.fillText(`Air gap (hedef): ${inputs.airGapMm.toFixed(1)} mm`, 16, 66);
+      ctx.fillText('Örnek LIM yerleşimi', motorX + 18, motorY + 46);
+
+      ctx.strokeStyle = '#b91c1c';
+      ctx.lineWidth = 1.5;
+      const gapXLeft = motorX - 25;
+      ctx.beginPath();
+      ctx.moveTo(gapXLeft, motorY);
+      ctx.lineTo(gapXLeft, motorY + motorH);
+      ctx.stroke();
+      ctx.fillStyle = '#b91c1c';
+      ctx.fillText(`${inputs.airGapMm.toFixed(1)} mm`, gapXLeft - 8, motorY - 8);
+    }
+
+    function simulate(inputs) {
+      const dt = 1;
+      const n = params.simDurationSec + 1;
+      const time = [];
+      const rpm = [];
+      const force = [];
+
+      const omegaTarget = inputs.targetRpm * 2 * Math.PI / 60;
+      const alpha = omegaTarget / inputs.spinupSec;
+      const inertia = 0.5 * params.diskMassKg * params.effectiveRadiusM * params.effectiveRadiusM;
+      const accelTorque = inertia * alpha;
+      const accelForce = accelTorque / params.effectiveRadiusM;
+
+      for (let t = 0; t < n; t += dt) {
+        const currentOmega = t <= inputs.spinupSec ? alpha * t : omegaTarget;
+        const currentRpm = currentOmega * 60 / (2 * Math.PI);
+        const currentForce = t <= inputs.spinupSec ? accelForce : 0;
+        time.push(t);
+        rpm.push(currentRpm);
+        force.push(currentForce);
+      }
+
+      return { time, rpm, force, inertia, accelTorque, accelForce, omegaTarget };
+    }
+
+    function drawSimulation(inputs, result) {
+      const ctx = simCanvas.getContext('2d');
+      const w = simCanvas.width;
+      const h = simCanvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const margin = { top: 30, right: 18, bottom: 40, left: 56 };
+      const plotW = w - margin.left - margin.right;
+      const plotH = h - margin.top - margin.bottom;
+
+      const maxRpm = Math.max(inputs.targetRpm * 1.15, 130);
+      const maxForce = Math.max(inputs.forceTarget * 1.3, result.accelForce * 1.3, 12);
+
+      function x(t) {
+        return margin.left + (t / params.simDurationSec) * plotW;
+      }
+      function yRpm(v) {
+        return margin.top + (1 - v / maxRpm) * plotH;
+      }
+      function yForce(v) {
+        return margin.top + (1 - v / maxForce) * plotH;
+      }
+
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(margin.left, margin.top, plotW, plotH);
+
+      ctx.fillStyle = '#334155';
+      ctx.font = '12px Arial';
+      for (let i = 0; i <= 6; i++) {
+        const t = (params.simDurationSec / 6) * i;
+        const xx = x(t);
+        ctx.beginPath();
+        ctx.moveTo(xx, margin.top);
+        ctx.lineTo(xx, margin.top + plotH);
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.stroke();
+        ctx.fillText(`${Math.round(t)}s`, xx - 10, margin.top + plotH + 16);
+      }
+
+      ctx.strokeStyle = '#2563eb';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      result.time.forEach((t, i) => {
+        const xx = x(t);
+        const yy = yRpm(result.rpm[i]);
+        if (i === 0) ctx.moveTo(xx, yy);
+        else ctx.lineTo(xx, yy);
+      });
+      ctx.stroke();
+
+      ctx.strokeStyle = '#dc2626';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      result.time.forEach((t, i) => {
+        const xx = x(t);
+        const yy = yForce(result.force[i]);
+        if (i === 0) ctx.moveTo(xx, yy);
+        else ctx.lineTo(xx, yy);
+      });
+      ctx.stroke();
+
+      ctx.setLineDash([5, 4]);
+      ctx.strokeStyle = '#ea580c';
+      ctx.beginPath();
+      ctx.moveTo(x(0), yForce(inputs.forceTarget));
+      ctx.lineTo(x(params.simDurationSec), yForce(inputs.forceTarget));
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = '#0f172a';
+      ctx.font = '13px Arial';
+      ctx.fillText('Mavi: RPM', margin.left + 8, margin.top + 18);
+      ctx.fillText('Kırmızı: İvme fazı kuvveti (N)', margin.left + 8, margin.top + 36);
+      ctx.fillText('Turuncu kesik: hedef kuvvet sınırı', margin.left + 8, margin.top + 54);
+      ctx.fillText(`Sol eksen: RPM (0-${maxRpm.toFixed(0)})`, margin.left + 8, margin.top + plotH - 20);
+      ctx.fillText(`Sağ eksen temsili: Kuvvet N (0-${maxForce.toFixed(1)})`, margin.left + 8, margin.top + plotH - 4);
+    }
+
+    function render() {
+      const inputs = readInputs();
+      const result = simulate(inputs);
+      drawGeometry(inputs);
+      drawSimulation(inputs, result);
+
+      metricsDiv.innerHTML = `
+        <strong>Hesaplanan özet:</strong><br>
+        Atalet momenti J = <strong>${result.inertia.toFixed(2)} kg·m²</strong><br>
+        Hedef açısal hız ω = <strong>${result.omegaTarget.toFixed(2)} rad/s</strong><br>
+        İvme fazı tork gereksinimi T = <strong>${result.accelTorque.toFixed(2)} N·m</strong><br>
+        İvme fazı lineer kuvvet F = <strong>${result.accelForce.toFixed(2)} N</strong><br>
+        Kuvvet kıyas: F / hedef = <strong>${(100 * result.accelForce / inputs.forceTarget).toFixed(1)}%</strong>
+      `;
+    }
+
+    ['targetRpm', 'spinupSec', 'airGapMm', 'forceTarget'].forEach((id) => {
+      document.getElementById(id).addEventListener('input', render);
+    });
+
+    render();
+  </script>
+</body>
+</html>

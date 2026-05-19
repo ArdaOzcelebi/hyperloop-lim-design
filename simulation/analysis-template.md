@@ -29,3 +29,7 @@ Bu klasör, Hyperloop LIM projesi için temel termal ve manyetik analizlere dair
 ---
 
 Her analiz çıktısı .jpg/.png grafik veya uygun tablo ile bu klasörde paylaşılabilir.
+
+## Görselleştirme ve Basit Simülasyon
+- Test standı geometrisi ve parametre tabanlı 120 saniyelik basit hızlanma simülasyonu için:
+  - [simulation/test-stand-visualization.html](test-stand-visualization.html)

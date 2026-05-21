@@ -18,8 +18,8 @@ Bu dökümanda, Hyperloop LIM itki sistemi için gereken tüm ana mühendislik p
 ## 3. Motor ve Sargı Parametreleri (Seçim Gerekçeleriyle)
 | Parametre                 | Değer (Aralık)             | Gerekçe |
 |--------------------------|----------------------------|---------|
-| Kutup sayısı             | 6 (başlangıç; optimize edilecek) | 1600mm/6 ~ 267mm kutup adımı ile lineer hız, 50Hz ve slip limita uygundur |
-| Kutup adımı              | ≈267 mm                    | Disk çevresine oranla uygun |
+| Kutup sayısı             | 6 (başlangıç; optimize edilecek) | Hedef hız 10 m/s, f=50 Hz, %5 slip → τ ≈ 105 mm; 6 kutup için aktif stator uzunluğu ≈ 630 mm |
+| Kutup adımı              | ≈105 mm                    | τ = v_sync/(2f) = (10/0.95)/(2×50) ≈ 105 mm (lineer hız-frekans ilişkisinden); 1600mm/6=267mm disk geometrik bölünmesidir, kutup adımı değildir |
 | Slip                     | %5                         | Yüksek verim, hareketli yükte uygun |
 | Sarım sayısı             | 18/faz (örnek)             | Yeterli manyetik kuvvet ve akı için |
 | Akım değeri              | 15 A RMS (74 A max tahmini) | Slot fill ve tel çapına göre |

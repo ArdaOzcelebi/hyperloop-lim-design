@@ -253,7 +253,7 @@
 
       const diskR = (params.diskDiameterMm / 2) * layout.mmToPx;
       const cx = w * layout.diskCenterXRatio;
-      const cy = h * 0.5;
+      const cy = h * 0.44;
 
       ctx.strokeStyle = '#334155';
       ctx.lineWidth = 2;
@@ -289,14 +289,14 @@
       const motorX = cx - motorW / 2;
       const diskBottomY = cy + diskR;
       const visibleGapPx = Math.max(inputs.airGapMm * layout.mmToPx, layout.visibleGapFloorPx);
-      const motorY = diskBottomY - visibleGapPx - motorH;
+      const motorY = diskBottomY + visibleGapPx;
       ctx.fillStyle = 'rgba(37, 99, 235, 0.2)';
       ctx.strokeStyle = '#2563eb';
       ctx.lineWidth = 2;
       ctx.fillRect(motorX, motorY, motorW, motorH);
       ctx.strokeRect(motorX, motorY, motorW, motorH);
       ctx.fillStyle = 'rgba(37, 99, 235, 0.12)';
-      ctx.fillRect(motorX + 18, motorY - 10, motorW - 36, 10);
+      ctx.fillRect(motorX + 18, motorY, motorW - 36, 10);
 
       ctx.fillStyle = '#1e293b';
       ctx.font = '14px Arial';
@@ -349,7 +349,7 @@
       const diskRy = 125;
       const visibleGapPx = Math.max(inputs.airGapMm * layout.mmToPx, layout.visibleGapFloorPx);
       const motorX = ox + 165;
-      const motorY = oy + 225;
+      const motorY = diskCy + diskRy + visibleGapPx;
       const motorW = 120;
       const motorH = 52;
       const motorDepth = 82;
@@ -416,7 +416,7 @@
 
       prism(motorX, motorY, motorW, motorH, motorDepth, '#60a5fa', '#2563eb', '#93c5fd');
       ctx.fillStyle = '#dbeafe';
-      ctx.fillRect(motorX + 18, motorY - 8, motorW - 36, 8);
+      ctx.fillRect(motorX + 18, motorY, motorW - 36, 8);
 
       const diskBottomY = diskCy + diskRy;
       const gapX = motorX + motorW / 2;
@@ -424,8 +424,9 @@
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(gapX, diskBottomY);
-      ctx.lineTo(gapX, motorY - visibleGapPx / 2);
+      ctx.lineTo(gapX, motorY);
       ctx.stroke();
+      ctx.font = '14px Arial';
       ctx.fillStyle = '#b91c1c';
       ctx.fillText(`Hava aralığı ${inputs.airGapMm.toFixed(1)} mm`, gapX + 10, motorY - 10);
 

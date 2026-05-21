@@ -296,7 +296,7 @@
       ctx.fillRect(motorX, motorY, motorW, motorH);
       ctx.strokeRect(motorX, motorY, motorW, motorH);
       ctx.fillStyle = 'rgba(37, 99, 235, 0.12)';
-      ctx.fillRect(motorX + 18, motorY, motorW - 36, 10);
+      ctx.fillRect(motorX + 18, motorY, motorW - 36, 10); // active winding layer at motor top face
 
       ctx.fillStyle = '#1e293b';
       ctx.font = '14px Arial';
@@ -416,7 +416,7 @@
 
       prism(motorX, motorY, motorW, motorH, motorDepth, '#60a5fa', '#2563eb', '#93c5fd');
       ctx.fillStyle = '#dbeafe';
-      ctx.fillRect(motorX + 18, motorY, motorW - 36, 8);
+      ctx.fillRect(motorX + 18, motorY, motorW - 36, 8); // active winding layer at motor top face
 
       const diskBottomY = diskCy + diskRy;
       const gapX = motorX + motorW / 2;

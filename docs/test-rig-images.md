@@ -3,18 +3,18 @@
 Bu dosyada test düzeneğine ait temel tasarım, montaj ve kesit-görselleri referanslanmıştır.
 
 **1. Genel perspektif görünüş:**  
-![image1](image1)
+![Genel perspektif](https://github.com/user-attachments/assets/06fd3e24-336c-48b1-b435-f540f2453c6e)
 
 **2. Yan kesit ve tapadan görünüş:**  
-![image2](image2)
+![Yan kesit](https://github.com/user-attachments/assets/e8c1dea4-9d56-4ae9-8edb-e74a08e57b07)
 
 **3. Ön görünüş ve montaj & yeşil alan boyutları:**  
-![image3](image3)
+![Ön görünüş ve yeşil alan](https://github.com/user-attachments/assets/9e7437d7-a353-4926-9b3c-94cae70e66d3)
 - Disk çapı: 1600 mm
 - Montaj güvenlik alanı (yeşil yamuk): üst kenar 600 mm, alt kenar 1300 mm, yükseklik 600 mm
 
 **4. Disk kesit detayı ve hava aralığı:**  
-![image4](image4)
+![Motor yerleşimi ve hava aralığı detayı](https://github.com/user-attachments/assets/61a7b1ca-0711-4c45-b4b0-9eeb50b1f259)
 - Hava aralığı (operasyonel hedef): her iki tarafta 3 mm (minimum 2 mm kuralı korunarak). Çizimdeki diğer ölçüler kesit geometrisi referansıdır.
 - Hava aralığı, motorun disk/ray tarafına bakan aktif yüzeyi ile disk arasındaki boşluk olarak yorumlanmalıdır.
 

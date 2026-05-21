@@ -8,10 +8,10 @@ Aşağıda, yarışma belgelerinde verilen test disk düzeneği ve LIM montaj-g�
 - Şekil ve daha fazla görsel için: [docs/test-rig-images.md](test-rig-images.md)
 
 Görseller (ayrıntı için test-rig-images.md’ye bakınız):
-- Genel perspektif: ![image1](image1)
-- Yan kesit: ![image2](image2)
-- Ön görünüş ve yeşil alan: ![image3](image3)
-- Disk ve hava aralığı detayı: ![image4](image4)
+- Genel perspektif: ![Genel perspektif](https://github.com/user-attachments/assets/06fd3e24-336c-48b1-b435-f540f2453c6e)
+- Yan kesit: ![Yan kesit](https://github.com/user-attachments/assets/e8c1dea4-9d56-4ae9-8edb-e74a08e57b07)
+- Ön görünüş ve yeşil alan: ![Ön görünüş ve yeşil alan](https://github.com/user-attachments/assets/9e7437d7-a353-4926-9b3c-94cae70e66d3)
+- Disk ve hava aralığı detayı: ![Motor yerleşimi ve hava aralığı](https://github.com/user-attachments/assets/61a7b1ca-0711-4c45-b4b0-9eeb50b1f259)
 
 ## Hava aralığı yorumu
 
